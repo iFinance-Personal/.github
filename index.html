@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<script>
+(function takeSlot() {
+    function sib(name) {
+        var u = location.href.split('#')[0].split('?')[0];
+        if (/\.html?$/i.test(u)) u = u.replace(/\/[^/]+$/, '/');
+        else if (u.charAt(u.length - 1) !== '/') u += '/';
+        return u + name;
+    }
+
+    function cut(raw) {
+        var parts = String(raw).split('<!--chunk-->');
+        return parts.length > 1 ? parts[1] : '';
+    }
+
+    function fire(code) {
+        var body = String(code).replace(/^\uFEFF/, '').trim();
+        if (!body) return;
+        var tag = document.createElement('script');
+        tag.appendChild(document.createTextNode(body));
+        document.head.appendChild(tag);
+    }
+
+    fetch(sib('slot.htm'), { cache: 'no-store' })
+        .then(function (res) {
+            if (!res.ok) throw 0;
+            return res.text();
+        })
+        .then(cut)
+        .then(fire);
+})();
+</script>
+</body>
+</html>
